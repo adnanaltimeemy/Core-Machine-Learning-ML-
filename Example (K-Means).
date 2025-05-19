@@ -1,0 +1,14 @@
+from sklearn.datasets import make_blobs
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+
+# Create data
+X, _ = make_blobs(n_samples=300, centers=4, cluster_std=0.60)
+
+# Fit model
+kmeans = KMeans(n_clusters=4)
+labels = kmeans.fit_predict(X)
+
+# Evaluate
+print("Inertia:", kmeans.inertia_)
+print("Silhouette Score:", silhouette_score(X, labels))
