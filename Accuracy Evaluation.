@@ -1,0 +1,27 @@
+# Use the test split
+test_iter = IMDB(split='test')
+test_dataloader = DataLoader(list(test_iter), batch_size=8, collate_fn=collate_batch)
+
+correct = 0
+total = 0
+model.eval()
+with torch.no_grad():
+    for text_batch, label_batch in test_dataloader:
+        text_batch, label_batch = text_batch.to(device), label_batch.to(device)
+        outputs = model(text_batch)
+        preds = (outputs > 0.5).long()
+        correct += (preds == label_batch).sum().item()
+        total += label_batch.size(0)
+
+print(f"Test Accuracy: {100 * correct / total:.2f}%")
+
+def predict_sentiment(text):
+    model.eval()
+    with torch.no_grad():
+        text_tensor = torch.tensor(text_pipeline(text), dtype=torch.int64).unsqueeze(0).to(device)
+        output = model(text_tensor)
+        return "Positive" if output.item() > 0.5 else "Negative"
+
+print(predict_sentiment("This movie was fantastic and uplifting!"))
+print(predict_sentiment("Terrible plot. Waste of time."))
+
